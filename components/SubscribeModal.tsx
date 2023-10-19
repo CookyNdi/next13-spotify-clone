@@ -29,7 +29,7 @@ const SubscribeModal: React.FC<SubscribeModalProps> = ({ products }) => {
   const { user, isLoading, subscription } = useUser();
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
 
-  const onChange = (opne: boolean) => {
+  const onChange = (open: boolean) => {
     if (!open) {
       subscribeModal.onClose();
     }
@@ -62,22 +62,25 @@ const SubscribeModal: React.FC<SubscribeModalProps> = ({ products }) => {
     content = (
       <div>
         {products.map((product) => {
-          if (product.prices?.length) {
+          if (!product.prices?.length) {
             return <div key={product.id}>No prices available</div>;
           }
-          return product.prices?.map((price) => (
+          return product.prices.map((price) => (
             <Button
+              key={price.id}
               onClick={() => handleCheckout(price)}
               disabled={isLoading || price.id === priceIdLoading}
-              key={price.id}
-            >{`Subscribe for ${formatPrice(price)} a ${price.interval}`}</Button>
+              className="mb-4"
+            >
+              {`Subscribe for ${formatPrice(price)} a ${price.interval}`}
+            </Button>
           ));
         })}
       </div>
     );
   }
   if (subscription) {
-    content = <div className="text-center">Already subscribed</div>;
+    content = <div className="text-center">Already subscribed.</div>;
   }
   return (
     <Modal
