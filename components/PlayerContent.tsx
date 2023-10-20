@@ -1,8 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
+import { BiMenu } from "react-icons/bi";
 // @ts-ignore
 import useSound from "use-sound";
 
@@ -20,6 +22,8 @@ interface PlayerContentProps {
 }
 
 const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
+  const router = useRouter();
+  const path = usePathname();
   const player = usePlayer();
   const vol = useVolume();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -65,7 +69,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     player.setId(previousSong);
   };
 
-  const [play, { pause, sound}] = useSound(songUrl, {
+  const [play, { pause, sound }] = useSound(songUrl, {
     volume: vol.volume === null ? storedValue : vol.volume,
     onplay: () => setIsPlaying(true),
     onend: () => {
@@ -96,6 +100,14 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
       vol.setVolume(storedValue);
     } else {
       vol.setVolume(0);
+    }
+  };
+
+  const handleQueue = () => {
+    if (path !== "/queue") {
+      router.push("/queue");
+    } else {
+      router.back();
     }
   };
 
@@ -134,7 +146,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
         />
       </div>
       <div className="hidden md:flex w-full justify-end pr-2">
-        <div className="flex items-center gap-x-2 w-[120px]">
+        <div className="flex items-center gap-x-2 w-[180px]">
+          <BiMenu onClick={handleQueue} className="mr-1 cursor-pointer" size={26} />
           <VolumeIcon onClick={handleMute} size={34} className="cursor-pointer" />
           <Slider value={vol.volume === null ? storedValue : vol.volume} onChange={(value) => vol.setVolume(value)} />
         </div>
