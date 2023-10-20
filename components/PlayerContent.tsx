@@ -11,6 +11,8 @@ import usePlayer from "@/hooks/usePlayer";
 import MediaItem from "./MediaItem";
 import LikeButton from "./LikeButton";
 import Slider from "./Slider";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import useVolume from "@/hooks/useVolume";
 
 interface PlayerContentProps {
   song: Song;
@@ -19,11 +21,23 @@ interface PlayerContentProps {
 
 const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
   const player = usePlayer();
-  const [volume, setVolume] = useState(1);
+  const vol = useVolume();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [storedValue, setValue] = useLocalStorage("volume-player", vol.volume);
+
+  useEffect(() => {
+    if (storedValue === null) {
+      setValue(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setValue(vol.volume);
+  }, [setValue, vol]);
 
   const Icon = isPlaying ? BsPauseFill : BsPlayFill;
-  const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
+  const VolumeIcon = vol.volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
 
   const onPlayNext = () => {
     if (player.ids.length === 0) {
@@ -51,8 +65,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     player.setId(previousSong);
   };
 
-  const [play, { pause, sound }] = useSound(songUrl, {
-    volume: volume,
+  const [play, { pause, sound}] = useSound(songUrl, {
+    volume: vol.volume === null ? storedValue : vol.volume,
     onplay: () => setIsPlaying(true),
     onend: () => {
       setIsPlaying(false);
@@ -78,10 +92,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
   };
 
   const handleMute = () => {
-    if (volume === 0) {
-      setVolume(1);
+    if (vol.volume === 0) {
+      vol.setVolume(storedValue);
     } else {
-      setVolume(0);
+      vol.setVolume(0);
     }
   };
 
@@ -107,7 +121,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
           size={30}
           className="text-neutral-400 cursor-pointer hover:text-white transition"
         />
-        <div onClick={handlePlay} className="flex items-center justify-center h-10 w-10 rounded-full bg-white p-1 cursor-pointer">
+        <div
+          onClick={handlePlay}
+          className="flex items-center justify-center h-10 w-10 rounded-full bg-white p-1 cursor-pointer"
+        >
           <Icon size={30} className="text-black" />
         </div>
         <AiFillStepForward
@@ -119,7 +136,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
       <div className="hidden md:flex w-full justify-end pr-2">
         <div className="flex items-center gap-x-2 w-[120px]">
           <VolumeIcon onClick={handleMute} size={34} className="cursor-pointer" />
-          <Slider value={volume} onChange={(value) => setVolume(value)} />
+          <Slider value={vol.volume === null ? storedValue : vol.volume} onChange={(value) => vol.setVolume(value)} />
         </div>
       </div>
     </div>
