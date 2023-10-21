@@ -3,6 +3,10 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Note
 I creating this project by following course tutorial from [@AntonioErdeljac](https://github.com/AntonioErdeljac) in [Youtube: Code With Antonio ](https://youtu.be/2aeMRB8LL4o?si=FDz_atW5C5VFBr4X). I learned a lot of things by taking this course, big thanks for Antonio Erdeljac.
 
+#### Feature I Added
+- Dynamic Volume & set to localstorage
+- Queue Page
+
 ## Getting Started
 
 First, run the development server:
