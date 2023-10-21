@@ -1,16 +1,23 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import LikeButton from "@/components/LikeButton";
 import MediaItem from "@/components/MediaItem";
 import useOnPlay from "@/hooks/useOnPlay";
 import { Song } from "@/types";
+import getQueueSongs from "@/actions/getQueueSongs";
+import usePlayer from "@/hooks/usePlayer";
 
-interface QueueContentProps {
-  songs: Song[];
-}
-
-const QueueContent: React.FC<QueueContentProps> = ({ songs }) => {
+const QueueContent = () => {
+  const player = usePlayer();
+  const [songs, setSongs] = useState<Song[]>([]);
+  useEffect(() => {
+    const getSongs = async () => {
+      const fetchSong = await getQueueSongs(player.ids);
+      setSongs(fetchSong);
+    };
+    getSongs();
+  }, [player]);
   const onPlay = useOnPlay(songs);
 
   if (songs.length === 0) {
