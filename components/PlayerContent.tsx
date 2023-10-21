@@ -147,7 +147,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
       </div>
       <div className="hidden md:flex w-full justify-end pr-2">
         <div className="flex items-center gap-x-2 w-[180px]">
-          <BiMenu onClick={handleQueue} className="mr-1 cursor-pointer" size={26} />
+          <BiMenu onClick={handleQueue} className="mr-1 cursor-pointer" size={26} title="Queue"/>
           <VolumeIcon onClick={handleMute} size={34} className="cursor-pointer" />
           <Slider value={vol.volume === null ? storedValue : vol.volume} onChange={(value) => vol.setVolume(value)} />
         </div>

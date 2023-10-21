@@ -1,11 +1,10 @@
 import { Song } from "@/types";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { Database } from "@/types_db";
+import { createClientComponentClient  } from "@supabase/auth-helpers-nextjs";
+// import { cookies } from "next/headers";
 
 const getQueueSongs = async (ids: string[]): Promise<Song[]> => {
-  const supabase = createServerComponentClient({
-    cookies: cookies,
-  });
+  const supabase = createClientComponentClient<Database>();
 
   const { data, error } = await supabase
     .from("songs")
